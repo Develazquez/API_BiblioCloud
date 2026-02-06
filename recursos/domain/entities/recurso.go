@@ -1,5 +1,7 @@
 package entities
 
+import "database/sql"
+
 // EstadoRecurso representa los estados posibles de un recurso
 type EstadoRecurso string
 
@@ -13,7 +15,7 @@ type Recurso struct {
 	ID          int
 	Titulo      string
 	Categoria   string
-	ImagenURL   string
+	ImagenURL   sql.NullString
 	Estado      EstadoRecurso
 	Descripcion string
 }
@@ -21,9 +23,12 @@ type Recurso struct {
 // NewRecurso crea una nueva instancia de Recurso
 func NewRecurso(titulo, categoria, imagenURL, descripcion string) *Recurso {
 	return &Recurso{
-		Titulo:      titulo,
-		Categoria:   categoria,
-		ImagenURL:   imagenURL,
+		Titulo:    titulo,
+		Categoria: categoria,
+		ImagenURL: sql.NullString{
+			String: imagenURL,
+			Valid:  imagenURL != "",
+		},
 		Estado:      EstadoDisponible,
 		Descripcion: descripcion,
 	}
@@ -47,4 +52,12 @@ func (r *Recurso) SetEstado(estado EstadoRecurso) {
 // IsDisponible verifica si el recurso está disponible
 func (r *Recurso) IsDisponible() bool {
 	return r.Estado == EstadoDisponible
+}
+
+// GetImagenURL obtiene la URL de la imagen de forma segura
+func (r *Recurso) GetImagenURL() string {
+	if r.ImagenURL.Valid {
+		return r.ImagenURL.String
+	}
+	return ""
 }

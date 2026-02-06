@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/recursos/application"
+	"biblioteca-api/recursos/domain/entities"
+	"biblioteca-api/recursos/infrastructure/dto"
 )
 
 type GetTodosRecursosController struct {
@@ -21,5 +23,6 @@ func (c *GetTodosRecursosController) Handle(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, resultado)
+	recursos := resultado.([]entities.Recurso)
+	ctx.JSON(200, dto.NewRecursoResponseSlice(recursos))
 }

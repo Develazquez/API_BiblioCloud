@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/recursos/application"
+	"biblioteca-api/recursos/domain/entities"
+	"biblioteca-api/recursos/infrastructure/dto"
 )
 
 type GetRecursoPorIDController struct {
@@ -25,5 +27,6 @@ func (c *GetRecursoPorIDController) Handle(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, resultado)
+	recurso := resultado.(*entities.Recurso)
+	ctx.JSON(200, dto.NewRecursoResponse(recurso))
 }
