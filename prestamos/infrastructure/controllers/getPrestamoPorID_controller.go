@@ -1,11 +1,9 @@
 package controllers
 
 import (
-	"encoding/json"
-	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/prestamos/application"
 )
@@ -18,16 +16,14 @@ func NewGetPrestamoPorIDController(usecase *application.GetPrestamoPorIDUseCase)
 	return &GetPrestamoPorIDController{usecase: usecase}
 }
 
-func (c *GetPrestamoPorIDController) Handle(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
+func (c *GetPrestamoPorIDController) Handle(ctx *gin.Context) {
+	id, _ := strconv.Atoi(ctx.Param("id"))
 
 	resultado, err := c.usecase.Execute(id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		ctx.JSON(404, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resultado)
+	ctx.JSON(200, resultado)
 }

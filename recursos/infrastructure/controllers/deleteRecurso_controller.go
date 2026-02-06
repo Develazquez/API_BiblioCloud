@@ -1,34 +1,29 @@
 package controllers
 
 import (
-	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/recursos/application"
 )
 
-// DeleteRecursoController elimina un recurso
 type DeleteRecursoController struct {
 	usecase *application.DeleteRecursoUseCase
 }
 
-// NewDeleteRecursoController crea una nueva instancia
 func NewDeleteRecursoController(usecase *application.DeleteRecursoUseCase) *DeleteRecursoController {
 	return &DeleteRecursoController{usecase: usecase}
 }
 
-// Handle maneja la petición HTTP
-func (c *DeleteRecursoController) Handle(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
+func (c *DeleteRecursoController) Handle(ctx *gin.Context) {
+	id, _ := strconv.Atoi(ctx.Param("id"))
 
 	err := c.usecase.Execute(id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		ctx.JSON(404, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	ctx.Status(204)
 }

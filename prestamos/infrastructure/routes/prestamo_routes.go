@@ -3,14 +3,14 @@ package routes
 import (
 	"database/sql"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/prestamos/application"
 	"biblioteca-api/prestamos/infrastructure/controllers"
 	"biblioteca-api/prestamos/infrastructure/repository"
 )
 
-func PrestamoRoutes(router *mux.Router, db *sql.DB) {
+func PrestamoRoutes(router *gin.Engine, db *sql.DB) {
 	prestamoRepo := repository.NewPrestamoRepositoryPostgres(db)
 
 	createUseCase := application.NewCreatePrestamoUseCase(prestamoRepo)
@@ -27,10 +27,10 @@ func PrestamoRoutes(router *mux.Router, db *sql.DB) {
 	deleteController := controllers.NewDeletePrestamoController(deleteUseCase)
 	devolverController := controllers.NewDevolverPrestamoController(devolverUseCase)
 
-	router.HandleFunc("/prestamos", createController.Handle).Methods("POST")
-	router.HandleFunc("/prestamos", getTodosController.Handle).Methods("GET")
-	router.HandleFunc("/prestamos/{id}", getByIDController.Handle).Methods("GET")
-	router.HandleFunc("/prestamos/{id}", updateController.Handle).Methods("PUT")
-	router.HandleFunc("/prestamos/{id}", deleteController.Handle).Methods("DELETE")
-	router.HandleFunc("/prestamos/{id}/devolver", devolverController.Handle).Methods("POST")
+	router.POST("/prestamos", createController.Handle)
+	router.GET("/prestamos", getTodosController.Handle)
+	router.GET("/prestamos/:id", getByIDController.Handle)
+	router.PUT("/prestamos/:id", updateController.Handle)
+	router.DELETE("/prestamos/:id", deleteController.Handle)
+	router.POST("/prestamos/:id/devolver", devolverController.Handle)
 }

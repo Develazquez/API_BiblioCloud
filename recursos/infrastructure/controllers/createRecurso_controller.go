@@ -1,39 +1,33 @@
 package controllers
 
 import (
-	"encoding/json"
-	"net/http"
+	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/recursos/application"
 	"biblioteca-api/recursos/domain/entities"
 )
 
-// CreateRecursoController maneja la creación de recursos
 type CreateRecursoController struct {
 	usecase *application.CreateRecursoUseCase
 }
 
-// NewCreateRecursoController crea una nueva instancia
 func NewCreateRecursoController(usecase *application.CreateRecursoUseCase) *CreateRecursoController {
 	return &CreateRecursoController{usecase: usecase}
 }
 
-// Handle maneja la petición HTTP
-func (c *CreateRecursoController) Handle(w http.ResponseWriter, r *http.Request) {
+func (c *CreateRecursoController) Handle(ctx *gin.Context) {
 	var recurso entities.Recurso
-	err := json.NewDecoder(r.Body).Decode(&recurso)
+	err := ctx.BindJSON(&recurso)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	resultado, err := c.usecase.Execute(&recurso)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(resultado)
+	ctx.JSON(201, resultado)
 }

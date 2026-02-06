@@ -1,8 +1,7 @@
 package controllers
 
 import (
-	"encoding/json"
-	"net/http"
+	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/usuarios/application"
 	"biblioteca-api/usuarios/domain/entities"
@@ -19,11 +18,11 @@ func NewCreateUsuarioController(usecase *application.CreateUsuarioUseCase) *Crea
 }
 
 // Handle maneja la petición HTTP
-func (c *CreateUsuarioController) Handle(w http.ResponseWriter, r *http.Request) {
+func (c *CreateUsuarioController) Handle(ctx *gin.Context) {
 	var usuario entities.Usuario
-	err := json.NewDecoder(r.Body).Decode(&usuario)
+	err := ctx.BindJSON(&usuario)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -34,11 +33,9 @@ func (c *CreateUsuarioController) Handle(w http.ResponseWriter, r *http.Request)
 
 	resultado, err := c.usecase.Execute(&usuario)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(resultado)
+	ctx.JSON(201, resultado)
 }

@@ -1,10 +1,9 @@
 package controllers
 
 import (
-	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/prestamos/application"
 )
@@ -17,15 +16,14 @@ func NewDevolverPrestamoController(usecase *application.DevolverPrestamoUseCase)
 	return &DevolverPrestamoController{usecase: usecase}
 }
 
-func (c *DevolverPrestamoController) Handle(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
+func (c *DevolverPrestamoController) Handle(ctx *gin.Context) {
+	id, _ := strconv.Atoi(ctx.Param("id"))
 
 	err := c.usecase.Execute(id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	ctx.Status(200)
 }

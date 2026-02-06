@@ -1,8 +1,7 @@
 package controllers
 
 import (
-	"encoding/json"
-	"net/http"
+	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/prestamos/application"
 	"biblioteca-api/prestamos/domain/entities"
@@ -16,20 +15,19 @@ func NewUpdatePrestamoController(usecase *application.UpdatePrestamoUseCase) *Up
 	return &UpdatePrestamoController{usecase: usecase}
 }
 
-func (c *UpdatePrestamoController) Handle(w http.ResponseWriter, r *http.Request) {
+func (c *UpdatePrestamoController) Handle(ctx *gin.Context) {
 	var prestamo entities.Prestamo
-	err := json.NewDecoder(r.Body).Decode(&prestamo)
+	err := ctx.BindJSON(&prestamo)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	resultado, err := c.usecase.Execute(&prestamo)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resultado)
+	ctx.JSON(200, resultado)
 }

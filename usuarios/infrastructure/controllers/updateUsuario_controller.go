@@ -1,11 +1,9 @@
 package controllers
 
 import (
-	"encoding/json"
-	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/usuarios/application"
 	"biblioteca-api/usuarios/domain/entities"
@@ -19,14 +17,13 @@ func NewUpdateUsuarioController(usecase *application.UpdateUsuarioUseCase) *Upda
 	return &UpdateUsuarioController{usecase: usecase}
 }
 
-func (c *UpdateUsuarioController) Handle(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
+func (c *UpdateUsuarioController) Handle(ctx *gin.Context) {
+	id, _ := strconv.Atoi(ctx.Param("id"))
 
 	var usuario entities.Usuario
-	err := json.NewDecoder(r.Body).Decode(&usuario)
+	err := ctx.BindJSON(&usuario)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -34,10 +31,9 @@ func (c *UpdateUsuarioController) Handle(w http.ResponseWriter, r *http.Request)
 
 	resultado, err := c.usecase.Execute(&usuario)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resultado)
+	ctx.JSON(200, resultado)
 }

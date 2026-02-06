@@ -1,8 +1,7 @@
 package controllers
 
 import (
-	"encoding/json"
-	"net/http"
+	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/prestamos/application"
 )
@@ -15,13 +14,12 @@ func NewGetTodosPrestamosController(usecase *application.GetTodosPrestamosUseCas
 	return &GetTodosPrestamosController{usecase: usecase}
 }
 
-func (c *GetTodosPrestamosController) Handle(w http.ResponseWriter, r *http.Request) {
+func (c *GetTodosPrestamosController) Handle(ctx *gin.Context) {
 	resultado, err := c.usecase.Execute()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		ctx.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resultado)
+	ctx.JSON(200, resultado)
 }
