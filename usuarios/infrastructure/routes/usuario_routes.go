@@ -18,14 +18,17 @@ func UsuarioRoutes(router *gin.Engine, db *sql.DB) {
 	getTodosUseCase := application.NewGetTodosUsuariosUseCase(usuarioRepo)
 	updateUseCase := application.NewUpdateUsuarioUseCase(usuarioRepo)
 	deleteUseCase := application.NewDeleteUsuarioUseCase(usuarioRepo)
+	loginUseCase := application.NewLoginUsuarioUseCase(usuarioRepo)
 
 	createController := controllers.NewCreateUsuarioController(createUseCase)
 	getByIDController := controllers.NewGetUsuarioPorIDController(getByIDUseCase)
 	getTodosController := controllers.NewGetTodosUsuariosController(getTodosUseCase)
 	updateController := controllers.NewUpdateUsuarioController(updateUseCase)
 	deleteController := controllers.NewDeleteUsuarioController(deleteUseCase)
+	loginController := controllers.NewLoginUsuarioController(loginUseCase)
 
 	router.POST("/usuarios", createController.Handle)
+	router.POST("/usuarios/login", loginController.Handle)
 	router.GET("/usuarios", getTodosController.Handle)
 	router.GET("/usuarios/:id", getByIDController.Handle)
 	router.PUT("/usuarios/:id", updateController.Handle)
