@@ -8,12 +8,12 @@ const (
 )
 
 type Usuario struct {
-	ID                        int
-	Nombre                    string
-	Email                     string
-	Password                  string
-	Estado                    EstadoUsuario
-	CantidadPrestamosActuales int
+	ID                        int				`json:"id"`
+	Nombre                    string			`json:"nombre"`
+	Email                     string			`json:"email"`
+	Password                  string			`json:"password"`
+	Estado                    EstadoUsuario		`json:"estado"`
+	CantidadPrestamosActuales int				`json:"cantidadPrestamosActuales"`
 }
 
 func NewUsuario(nombre, email, password string) *Usuario {

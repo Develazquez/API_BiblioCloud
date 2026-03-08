@@ -7,17 +7,22 @@ import (
 	"biblioteca-api/usuarios/domain/entities"
 )
 
-// CreateUsuarioController maneja la creación de usuarios
+type usuarioResponse struct {
+	ID                        int                    `json:"id"`
+	Nombre                    string                 `json:"nombre"`
+	Email                     string                 `json:"email"`
+	Estado                    entities.EstadoUsuario `json:"estado"`
+	CantidadPrestamosActuales int                    `json:"cantidadPrestamosActuales"`
+}
+
 type CreateUsuarioController struct {
 	usecase *application.CreateUsuarioUseCase
 }
 
-// NewCreateUsuarioController crea una nueva instancia
 func NewCreateUsuarioController(usecase *application.CreateUsuarioUseCase) *CreateUsuarioController {
 	return &CreateUsuarioController{usecase: usecase}
 }
 
-// Handle maneja la petición HTTP
 func (c *CreateUsuarioController) Handle(ctx *gin.Context) {
 	var usuario entities.Usuario
 	err := ctx.BindJSON(&usuario)
@@ -26,16 +31,25 @@ func (c *CreateUsuarioController) Handle(ctx *gin.Context) {
 		return
 	}
 
-	// Establecer estado por defecto si no se proporciona
 	if usuario.Estado == "" {
 		usuario.Estado = entities.EstadoActivo
 	}
 
 	resultado, err := c.usecase.Execute(&usuario)
 	if err != nil {
+		if err.Error() == "el email ya está registrado" {
+			ctx.JSON(409, gin.H{"error": err.Error()})
+			return
+		}
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(201, resultado)
+	ctx.JSON(201, usuarioResponse{
+		ID:                        resultado.ID,
+		Nombre:                    resultado.Nombre,
+		Email:                     resultado.Email,
+		Estado:                    resultado.Estado,
+		CantidadPrestamosActuales: resultado.CantidadPrestamosActuales,
+	})
 }
