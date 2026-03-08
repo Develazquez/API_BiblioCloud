@@ -2,13 +2,21 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-
 	"biblioteca-api/usuarios/application"
+	"biblioteca-api/usuarios/domain/entities"
 )
 
 type LoginRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
+}
+
+type loginUsuarioResponse struct {
+	ID                        int                    `json:"id"`
+	Nombre                    string                 `json:"nombre"`
+	Email                     string                 `json:"email"`
+	Estado                    entities.EstadoUsuario `json:"estado"`
+	CantidadPrestamosActuales int                    `json:"cantidadPrestamosActuales"`
 }
 
 type LoginUsuarioController struct {
@@ -35,6 +43,12 @@ func (c *LoginUsuarioController) Handle(ctx *gin.Context) {
 
 	ctx.JSON(200, gin.H{
 		"mensaje": "login exitoso",
-		"usuario": usuario,
+		"usuario": loginUsuarioResponse{
+			ID:                        usuario.ID,
+			Nombre:                    usuario.Nombre,
+			Email:                     usuario.Email,
+			Estado:                    usuario.Estado,
+			CantidadPrestamosActuales: usuario.CantidadPrestamosActuales,
+		},
 	})
 }
