@@ -6,7 +6,6 @@ import (
 	"biblioteca-api/recursos/domain/entities"
 )
 
-// RecursoResponse representa la respuesta de un recurso
 type RecursoResponse struct {
 	ID          int    `json:"id"`
 	Titulo      string `json:"titulo"`
@@ -14,19 +13,19 @@ type RecursoResponse struct {
 	ImagenURL   string `json:"imagen_url"`
 	Estado      string `json:"estado"`
 	Descripcion string `json:"descripcion"`
+	AudioURL    string `json:"audio_url"`
 }
 
-// RecursoRequest representa la solicitud para crear o actualizar un recurso
 type RecursoRequest struct {
 	ID          int    `json:"id"`
 	Titulo      string `json:"titulo" binding:"required"`
 	Categoria   string `json:"categoria" binding:"required"`
 	ImagenURL   string `json:"imagen_url"`
+	AudioURL    string `json:"audio_url"`
 	Estado      string `json:"estado"`
 	Descripcion string `json:"descripcion"`
 }
 
-// NewRecursoResponse convierte una entidad Recurso a RecursoResponse
 func NewRecursoResponse(r *entities.Recurso) RecursoResponse {
 	return RecursoResponse{
 		ID:          r.ID,
@@ -35,10 +34,10 @@ func NewRecursoResponse(r *entities.Recurso) RecursoResponse {
 		ImagenURL:   r.GetImagenURL(),
 		Estado:      r.GetEstadoString(),
 		Descripcion: r.Descripcion,
+		AudioURL:    r.GetAudioURL(),
 	}
 }
 
-// NewRecursoResponseSlice convierte un slice de Recurso a slice de RecursoResponse
 func NewRecursoResponseSlice(recursos []entities.Recurso) []RecursoResponse {
 	response := make([]RecursoResponse, len(recursos))
 	for i, r := range recursos {
@@ -59,5 +58,9 @@ func (r *RecursoRequest) ToEntity() *entities.Recurso {
 		},
 		Estado:      entities.EstadoRecurso(r.Estado),
 		Descripcion: r.Descripcion,
+		AudioURL: sql.NullString{
+			String: r.AudioURL,
+			Valid:  r.AudioURL != "",
+		},
 	}
 }

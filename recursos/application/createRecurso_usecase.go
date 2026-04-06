@@ -10,17 +10,14 @@ import (
 	"biblioteca-api/shared/cloudinary"
 )
 
-// CreateRecursoUseCase maneja la creación de recursos
 type CreateRecursoUseCase struct {
 	repository repository.RecursoRepository
 }
 
-// NewCreateRecursoUseCase crea una nueva instancia
 func NewCreateRecursoUseCase(repo repository.RecursoRepository) *CreateRecursoUseCase {
 	return &CreateRecursoUseCase{repository: repo}
 }
 
-// Execute ejecuta el caso de uso de crear recurso
 func (uc *CreateRecursoUseCase) Execute(recurso *entities.Recurso, imagen *multipart.FileHeader, audio *multipart.FileHeader) (*entities.Recurso, error) {
 	if !recurso.IsValid() {
 		return nil, errors.New("recurso no válido: falta el título")
@@ -35,7 +32,6 @@ func (uc *CreateRecursoUseCase) Execute(recurso *entities.Recurso, imagen *multi
 		recurso.ImagenURL = sql.NullString{String: imgUrl, Valid: true}
 	}
 
-	// 2. Subir Audio (si existe)
 	if audio != nil {
 		audioUrl, err := cloudinary.UploadAudio(audio)
 		if err != nil {
