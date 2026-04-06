@@ -1,9 +1,12 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 
 	"biblioteca-api/recursos/application"
+	"biblioteca-api/recursos/domain/entities"
 	"biblioteca-api/recursos/infrastructure/dto"
 )
 
@@ -16,16 +19,45 @@ func NewUpdateRecursoController(usecase *application.UpdateRecursoUseCase) *Upda
 }
 
 func (c *UpdateRecursoController) Handle(ctx *gin.Context) {
-	var request dto.RecursoRequest
-	err := ctx.BindJSON(&request)
-	if err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+	// Parsear el payload asegurando limite de peso de peticiones
+	if err := ctx.Request.ParseMultipartForm(60 << 20); err != nil {
+		ctx.JSON(400, gin.H{"error": "error al procesar datos del formulario"})
 		return
 	}
 
-	resultado, err := c.usecase.Execute(request.ToEntity())
+	idParam := ctx.Param("id")
+	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(400, gin.H{"error": "id de recurso inválido"})
+		return
+	}
+
+	// Mapear campos literales
+	recurso := &entities.Recurso{
+		ID:          id,
+		Titulo:      ctx.PostForm("titulo"),
+		Categoria:   ctx.PostForm("categoria"),
+		Descripcion: ctx.PostForm("descripcion"),
+	}
+
+	// Extraer Archivos
+	imagen, _ := ctx.FormFile("imagen") // Ignora el error, nil = no envió archivo
+	audio, _ := ctx.FormFile("audio")
+
+	// Validaciones de tamaño
+	if imagen != nil && imagen.Size > 5<<20 { // 5MB
+		ctx.JSON(400, gin.H{"error": "la imagen no debe superar los 5MB"})
+		return
+	}
+	if audio != nil && audio.Size > 50<<20 { // 50MB
+		ctx.JSON(400, gin.H{"error": "el audio no debe superar los 50MB"})
+		return
+	}
+
+	// Ejecutar logica de negocio
+	resultado, err := c.usecase.Execute(recurso, imagen, audio)
+	if err != nil {
+		ctx.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 

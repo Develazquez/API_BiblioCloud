@@ -1,8 +1,8 @@
 package application
 
 import (
-	"errors"
 	"biblioteca-api/usuarios/domain/repository"
+	"errors"
 )
 
 type GetUsuarioPorIDUseCase struct {

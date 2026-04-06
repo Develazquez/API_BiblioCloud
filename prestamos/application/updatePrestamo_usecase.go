@@ -1,9 +1,9 @@
 package application
 
 import (
-	"errors"
 	"biblioteca-api/prestamos/domain/entities"
 	"biblioteca-api/prestamos/domain/repository"
+	"errors"
 )
 
 type UpdatePrestamoUseCase struct {

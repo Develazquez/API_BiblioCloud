@@ -1,9 +1,9 @@
 package application
 
 import (
-	"errors"
 	"biblioteca-api/usuarios/domain/entities"
 	"biblioteca-api/usuarios/domain/repository"
+	"errors"
 )
 
 type UpdateUsuarioUseCase struct {

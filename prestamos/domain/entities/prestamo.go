@@ -5,18 +5,18 @@ import "time"
 type EstadoPrestamo string
 
 const (
-	EstadoActivo  EstadoPrestamo = "ACTIVO"
+	EstadoActivo   EstadoPrestamo = "ACTIVO"
 	EstadoDevuelto EstadoPrestamo = "DEVUELTO"
 )
 
 type Prestamo struct {
-	ID             int
-	UsuarioID      int
-	RecursoID      int
-	FechaInicio    time.Time
-	FechaLimite    time.Time
+	ID              int
+	UsuarioID       int
+	RecursoID       int
+	FechaInicio     time.Time
+	FechaLimite     time.Time
 	FechaDevolucion *time.Time
-	Estado         EstadoPrestamo
+	Estado          EstadoPrestamo
 }
 
 func NewPrestamo(usuarioID, recursoID int, fechaLimite time.Time) *Prestamo {

@@ -16,18 +16,23 @@ type Recurso struct {
 	Titulo      string
 	Categoria   string
 	ImagenURL   sql.NullString
+	AudioURL    sql.NullString // NUEVO campo
 	Estado      EstadoRecurso
 	Descripcion string
 }
 
 // NewRecurso crea una nueva instancia de Recurso
-func NewRecurso(titulo, categoria, imagenURL, descripcion string) *Recurso {
+func NewRecurso(titulo, categoria, imagenURL, audioURL, descripcion string) *Recurso {
 	return &Recurso{
 		Titulo:    titulo,
 		Categoria: categoria,
 		ImagenURL: sql.NullString{
 			String: imagenURL,
 			Valid:  imagenURL != "",
+		},
+		AudioURL: sql.NullString{
+			String: audioURL,
+			Valid:  audioURL != "",
 		},
 		Estado:      EstadoDisponible,
 		Descripcion: descripcion,
@@ -58,6 +63,14 @@ func (r *Recurso) IsDisponible() bool {
 func (r *Recurso) GetImagenURL() string {
 	if r.ImagenURL.Valid {
 		return r.ImagenURL.String
+	}
+	return ""
+}
+
+// GetAudioURL obtiene la URL del audio de forma segura
+func (r *Recurso) GetAudioURL() string {
+	if r.AudioURL.Valid {
+		return r.AudioURL.String
 	}
 	return ""
 }

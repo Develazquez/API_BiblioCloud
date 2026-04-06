@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"biblioteca-api/usuarios/application"
 	"biblioteca-api/usuarios/domain/entities"
+	"github.com/gin-gonic/gin"
 )
 
 type LoginRequest struct {

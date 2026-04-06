@@ -1,8 +1,8 @@
 package application
 
 import (
-	"errors"
 	"biblioteca-api/prestamos/domain/repository"
+	"errors"
 )
 
 type GetPrestamoPorIDUseCase struct {

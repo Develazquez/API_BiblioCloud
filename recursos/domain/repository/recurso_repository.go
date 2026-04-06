@@ -33,4 +33,7 @@ type RecursoRepository interface {
 
 	// ActualizarImagenURL actualiza la URL de la imagen de un recurso
 	ActualizarImagenURL(id int, imagenURL string) error
+
+	// ActualizarAudioURL actualiza la URL del audio de un recurso
+	ActualizarAudioURL(id int, audioURL string) error
 }
