@@ -1,0 +1,19 @@
+# Binarios
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+biblioteca-api
+
+# Variables de entorno
+.env
+
+# Dependencias
+vendor/
+
+# Archivos de sistema / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
