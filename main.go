@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	fcmRoutes "biblioteca-api/fcm/infrastructure/routes"
 	prestamoRoutes "biblioteca-api/prestamos/infrastructure/routes"
 	recursoRoutes "biblioteca-api/recursos/infrastructure/routes"
 	"biblioteca-api/shared/config"
@@ -31,6 +32,7 @@ func main() {
 	usuarioRoutes.UsuarioRoutes(router, db)
 	recursoRoutes.RecursoRoutes(router, db)
 	prestamoRoutes.PrestamoRoutes(router, db)
+	fcmRoutes.FCMRoutes(router, db)
 
 	// Health check
 	router.GET("/health", healthCheck)
@@ -45,7 +47,7 @@ func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-User-Id")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
