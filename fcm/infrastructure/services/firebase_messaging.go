@@ -73,5 +73,7 @@ func (s *firebaseMessagingImpl) SendMessage(token string, data map[string]string
 		log.Printf("Error enviando mensaje FCM a token %s: %v", token, err)
 		return err
 	}
+
+	log.Printf("Mensaje FCM enviado exitosamente al token: %s", token)
 	return nil
 }

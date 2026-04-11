@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -45,6 +46,7 @@ func (c *FCMController) RegisterToken(ctx *gin.Context) {
 		return
 	}
 
+	log.Printf("Token registrado exitosamente para el usuario %d", userID)
 	ctx.JSON(http.StatusOK, gin.H{"message": "Token registrado exitosamente"})
 }
 
@@ -68,5 +70,6 @@ func (c *FCMController) RemoveToken(ctx *gin.Context) {
 		return
 	}
 
+	log.Printf("Token removido exitosamente para el usuario %d", userID)
 	ctx.JSON(http.StatusOK, gin.H{"message": "Token removido exitosamente"})
 }

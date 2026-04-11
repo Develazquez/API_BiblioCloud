@@ -10,13 +10,13 @@ const (
 )
 
 type Prestamo struct {
-	ID              int
-	UsuarioID       int
-	RecursoID       int
-	FechaInicio     time.Time
-	FechaLimite     time.Time
-	FechaDevolucion *time.Time
-	Estado          EstadoPrestamo
+	ID              int            `json:"id"`
+	UsuarioID       int            `json:"usuario_id"`
+	RecursoID       int            `json:"recurso_id"`
+	FechaInicio     time.Time      `json:"fecha_prestamo"`
+	FechaLimite     time.Time      `json:"fecha_devolucion_estimada"`
+	FechaDevolucion *time.Time     `json:"fecha_devolucion,omitempty"`
+	Estado          EstadoPrestamo `json:"estado"`
 }
 
 func NewPrestamo(usuarioID, recursoID int, fechaLimite time.Time) *Prestamo {
