@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
