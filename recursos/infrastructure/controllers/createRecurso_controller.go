@@ -22,11 +22,15 @@ func (c *CreateRecursoController) Handle(ctx *gin.Context) {
 		return
 	}
 
+	creadoPor, _ := strconv.Atoi(ctx.PostForm("creado_por"))
+
 	recurso := &entities.Recurso{
 		Titulo:      ctx.PostForm("titulo"),
 		Categoria:   ctx.PostForm("categoria"),
 		Descripcion: ctx.PostForm("descripcion"),
 		Estado:      entities.EstadoDisponible,
+		Autor:       sql.NullString{String: ctx.PostForm("autor"), Valid: ctx.PostForm("autor") != ""},
+		CreadoPor:   sql.NullInt64{Int64: int64(creadoPor), Valid: creadoPor > 0},
 	}
 
 

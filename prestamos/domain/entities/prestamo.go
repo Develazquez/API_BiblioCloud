@@ -7,6 +7,7 @@ type EstadoPrestamo string
 const (
 	EstadoActivo   EstadoPrestamo = "ACTIVO"
 	EstadoDevuelto EstadoPrestamo = "DEVUELTO"
+	EstadoVencido  EstadoPrestamo = "VENCIDO"
 )
 
 type Prestamo struct {
@@ -52,5 +53,5 @@ func (p *Prestamo) IsActivo() bool {
 }
 
 func (p *Prestamo) IsVencido() bool {
-	return p.IsActivo() && time.Now().After(p.FechaLimite)
+	return (p.IsActivo() || p.Estado == EstadoVencido) && time.Now().After(p.FechaLimite)
 }

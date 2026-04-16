@@ -1,10 +1,16 @@
 package entities
 
 type EstadoUsuario string
+type RolUsuario string
 
 const (
-	EstadoActivo EstadoUsuario = "ACTIVO"
-	EstadoDeudor EstadoUsuario = "DEUDOR"
+	EstadoActivo   EstadoUsuario = "ACTIVO"
+	EstadoInactivo EstadoUsuario = "INACTIVO"
+)
+
+const (
+	RolUsuarioNormal RolUsuario = "USUARIO"
+	RolAdmin         RolUsuario = "ADMIN"
 )
 
 type Usuario struct {
@@ -14,6 +20,7 @@ type Usuario struct {
 	Password                  string        `json:"password"`
 	Estado                    EstadoUsuario `json:"estado"`
 	CantidadPrestamosActuales int           `json:"cantidadPrestamosActuales"`
+	Rol                       RolUsuario    `json:"rol"`
 }
 
 func NewUsuario(nombre, email, password string) *Usuario {
@@ -23,6 +30,7 @@ func NewUsuario(nombre, email, password string) *Usuario {
 		Password:                  password,
 		Estado:                    EstadoActivo,
 		CantidadPrestamosActuales: 0,
+		Rol:                       RolUsuarioNormal,
 	}
 }
 

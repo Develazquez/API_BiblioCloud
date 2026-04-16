@@ -14,6 +14,8 @@ type RecursoResponse struct {
 	Estado      string `json:"estado"`
 	Descripcion string `json:"descripcion"`
 	AudioURL    string `json:"audio_url"`
+	Autor       string `json:"autor"`
+	CreadoPor   int    `json:"creado_por,omitempty"`
 }
 
 type RecursoRequest struct {
@@ -24,6 +26,8 @@ type RecursoRequest struct {
 	AudioURL    string `json:"audio_url"`
 	Estado      string `json:"estado"`
 	Descripcion string `json:"descripcion"`
+	Autor       string `json:"autor"`
+	CreadoPor   int    `json:"creado_por"`
 }
 
 func NewRecursoResponse(r *entities.Recurso) RecursoResponse {
@@ -35,6 +39,8 @@ func NewRecursoResponse(r *entities.Recurso) RecursoResponse {
 		Estado:      r.GetEstadoString(),
 		Descripcion: r.Descripcion,
 		AudioURL:    r.GetAudioURL(),
+		Autor:       r.GetAutor(),
+		CreadoPor:   r.GetCreadoPor(),
 	}
 }
 
@@ -48,6 +54,7 @@ func NewRecursoResponseSlice(recursos []entities.Recurso) []RecursoResponse {
 
 // ToEntity convierte un RecursoRequest a una entidad Recurso
 func (r *RecursoRequest) ToEntity() *entities.Recurso {
+	creadoPorValid := r.CreadoPor > 0
 	return &entities.Recurso{
 		ID:        r.ID,
 		Titulo:    r.Titulo,
@@ -61,6 +68,14 @@ func (r *RecursoRequest) ToEntity() *entities.Recurso {
 		AudioURL: sql.NullString{
 			String: r.AudioURL,
 			Valid:  r.AudioURL != "",
+		},
+		Autor: sql.NullString{
+			String: r.Autor,
+			Valid:  r.Autor != "",
+		},
+		CreadoPor: sql.NullInt64{
+			Int64: int64(r.CreadoPor),
+			Valid: creadoPorValid,
 		},
 	}
 }

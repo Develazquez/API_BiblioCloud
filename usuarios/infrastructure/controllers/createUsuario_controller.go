@@ -13,6 +13,7 @@ type usuarioResponse struct {
 	Email                     string                 `json:"email"`
 	Estado                    entities.EstadoUsuario `json:"estado"`
 	CantidadPrestamosActuales int                    `json:"cantidadPrestamosActuales"`
+	Rol                       entities.RolUsuario    `json:"rol"`
 }
 
 type CreateUsuarioController struct {
@@ -51,5 +52,6 @@ func (c *CreateUsuarioController) Handle(ctx *gin.Context) {
 		Email:                     resultado.Email,
 		Estado:                    resultado.Estado,
 		CantidadPrestamosActuales: resultado.CantidadPrestamosActuales,
+		Rol:                       resultado.Rol,
 	})
 }

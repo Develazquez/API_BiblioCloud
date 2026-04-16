@@ -17,11 +17,11 @@ func NewUsuarioRepositoryPostgres(db *sql.DB) repository.UsuarioRepository {
 }
 
 func (r *UsuarioRepositoryPostgres) Crear(usuario *entities.Usuario) (*entities.Usuario, error) {
-	query := `INSERT INTO usuarios (nombre, email, password, estado, cantidad_prestamos_actuales)
-	          VALUES ($1, $2, $3, $4, $5) RETURNING id`
+	query := `INSERT INTO usuarios (nombre, email, password, estado, cantidad_prestamos_actuales, rol)
+	          VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
 
 	err := r.db.QueryRow(query, usuario.Nombre, usuario.Email, usuario.Password,
-		usuario.Estado, usuario.CantidadPrestamosActuales).Scan(&usuario.ID)
+		usuario.Estado, usuario.CantidadPrestamosActuales, usuario.Rol).Scan(&usuario.ID)
 
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (r *UsuarioRepositoryPostgres) Crear(usuario *entities.Usuario) (*entities.
 }
 
 func (r *UsuarioRepositoryPostgres) ObtenerPorID(id int) (*entities.Usuario, error) {
-	query := `SELECT id, nombre, email, password, estado, cantidad_prestamos_actuales
+	query := `SELECT id, nombre, email, password, estado, cantidad_prestamos_actuales, rol
 	          FROM usuarios WHERE id = $1`
 
 	usuario := &entities.Usuario{}
@@ -42,6 +42,7 @@ func (r *UsuarioRepositoryPostgres) ObtenerPorID(id int) (*entities.Usuario, err
 		&usuario.Password,
 		&usuario.Estado,
 		&usuario.CantidadPrestamosActuales,
+		&usuario.Rol,
 	)
 
 	if err == sql.ErrNoRows {
@@ -56,7 +57,7 @@ func (r *UsuarioRepositoryPostgres) ObtenerPorID(id int) (*entities.Usuario, err
 }
 
 func (r *UsuarioRepositoryPostgres) ObtenerPorEmail(email string) (*entities.Usuario, error) {
-	query := `SELECT id, nombre, email, password, estado, cantidad_prestamos_actuales
+	query := `SELECT id, nombre, email, password, estado, cantidad_prestamos_actuales, rol
 	          FROM usuarios WHERE email = $1`
 
 	usuario := &entities.Usuario{}
@@ -67,6 +68,7 @@ func (r *UsuarioRepositoryPostgres) ObtenerPorEmail(email string) (*entities.Usu
 		&usuario.Password,
 		&usuario.Estado,
 		&usuario.CantidadPrestamosActuales,
+		&usuario.Rol,
 	)
 
 	if err == sql.ErrNoRows {
@@ -81,7 +83,7 @@ func (r *UsuarioRepositoryPostgres) ObtenerPorEmail(email string) (*entities.Usu
 }
 
 func (r *UsuarioRepositoryPostgres) ObtenerTodos() ([]entities.Usuario, error) {
-	query := `SELECT id, nombre, email, password, estado, cantidad_prestamos_actuales
+	query := `SELECT id, nombre, email, password, estado, cantidad_prestamos_actuales, rol
 	          FROM usuarios ORDER BY id`
 
 	rows, err := r.db.Query(query)
@@ -100,6 +102,7 @@ func (r *UsuarioRepositoryPostgres) ObtenerTodos() ([]entities.Usuario, error) {
 			&usuario.Password,
 			&usuario.Estado,
 			&usuario.CantidadPrestamosActuales,
+			&usuario.Rol,
 		)
 		if err != nil {
 			return nil, err
@@ -111,11 +114,11 @@ func (r *UsuarioRepositoryPostgres) ObtenerTodos() ([]entities.Usuario, error) {
 }
 
 func (r *UsuarioRepositoryPostgres) Actualizar(usuario *entities.Usuario) (*entities.Usuario, error) {
-	query := `UPDATE usuarios SET nombre = $1, email = $2, password = $3, estado = $4
-	          WHERE id = $5`
+	query := `UPDATE usuarios SET nombre = $1, email = $2, password = $3, estado = $4, rol = $5
+	          WHERE id = $6`
 
 	_, err := r.db.Exec(query, usuario.Nombre, usuario.Email, usuario.Password,
-		usuario.Estado, usuario.ID)
+		usuario.Estado, usuario.Rol, usuario.ID)
 
 	if err != nil {
 		return nil, err
@@ -149,7 +152,7 @@ func (r *UsuarioRepositoryPostgres) DecrementarPrestamos(id int) error {
 }
 
 func (r *UsuarioRepositoryPostgres) ObtenerPorEstado(estado entities.EstadoUsuario) ([]entities.Usuario, error) {
-	query := `SELECT id, nombre, email, password, estado, cantidad_prestamos_actuales
+	query := `SELECT id, nombre, email, password, estado, cantidad_prestamos_actuales, rol
 	          FROM usuarios WHERE estado = $1`
 
 	rows, err := r.db.Query(query, estado)
@@ -168,6 +171,7 @@ func (r *UsuarioRepositoryPostgres) ObtenerPorEstado(estado entities.EstadoUsuar
 			&usuario.Password,
 			&usuario.Estado,
 			&usuario.CantidadPrestamosActuales,
+			&usuario.Rol,
 		)
 		if err != nil {
 			return nil, err

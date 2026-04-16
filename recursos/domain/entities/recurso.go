@@ -6,8 +6,9 @@ import "database/sql"
 type EstadoRecurso string
 
 const (
-	EstadoDisponible EstadoRecurso = "DISPONIBLE"
-	EstadoPrestado   EstadoRecurso = "PRESTADO"
+	EstadoDisponible   EstadoRecurso = "DISPONIBLE"
+	EstadoPrestado     EstadoRecurso = "PRESTADO"
+	EstadoNoDisponible EstadoRecurso = "NO_DISPONIBLE"
 )
 
 // Recurso representa la entidad de recurso en el dominio
@@ -17,12 +18,21 @@ type Recurso struct {
 	Categoria   string
 	ImagenURL   sql.NullString
 	AudioURL    sql.NullString // NUEVO campo
+	Autor       sql.NullString // NUEVO campo
+	CreadoPor   sql.NullInt64  // NUEVO campo
 	Estado      EstadoRecurso
 	Descripcion string
 }
 
 // NewRecurso crea una nueva instancia de Recurso
-func NewRecurso(titulo, categoria, imagenURL, audioURL, descripcion string) *Recurso {
+func NewRecurso(titulo, categoria, imagenURL, audioURL, descripcion, autor string, creadoPor int) *Recurso {
+	var creadoPorVal sql.NullInt64
+	if creadoPor > 0 {
+		creadoPorVal = sql.NullInt64{Int64: int64(creadoPor), Valid: true}
+	} else {
+		creadoPorVal = sql.NullInt64{Valid: false}
+	}
+
 	return &Recurso{
 		Titulo:    titulo,
 		Categoria: categoria,
@@ -34,6 +44,11 @@ func NewRecurso(titulo, categoria, imagenURL, audioURL, descripcion string) *Rec
 			String: audioURL,
 			Valid:  audioURL != "",
 		},
+		Autor: sql.NullString{
+			String: autor,
+			Valid:  autor != "",
+		},
+		CreadoPor:   creadoPorVal,
 		Estado:      EstadoDisponible,
 		Descripcion: descripcion,
 	}
@@ -73,4 +88,20 @@ func (r *Recurso) GetAudioURL() string {
 		return r.AudioURL.String
 	}
 	return ""
+}
+
+// GetAutor obtiene el autor de forma segura
+func (r *Recurso) GetAutor() string {
+	if r.Autor.Valid {
+		return r.Autor.String
+	}
+	return ""
+}
+
+// GetCreadoPor obtiene el CreadoPor de forma segura
+func (r *Recurso) GetCreadoPor() int {
+	if r.CreadoPor.Valid {
+		return int(r.CreadoPor.Int64)
+	}
+	return 0
 }

@@ -32,12 +32,16 @@ func (c *UpdateRecursoController) Handle(ctx *gin.Context) {
 		return
 	}
 
+	creadoPor, _ := strconv.Atoi(ctx.PostForm("creado_por"))
+
 	// Mapear campos literales
 	recurso := &entities.Recurso{
 		ID:          id,
 		Titulo:      ctx.PostForm("titulo"),
 		Categoria:   ctx.PostForm("categoria"),
 		Descripcion: ctx.PostForm("descripcion"),
+		Autor:       sql.NullString{String: ctx.PostForm("autor"), Valid: ctx.PostForm("autor") != ""},
+		CreadoPor:   sql.NullInt64{Int64: int64(creadoPor), Valid: creadoPor > 0},
 	}
 
 	// Extraer Archivos
